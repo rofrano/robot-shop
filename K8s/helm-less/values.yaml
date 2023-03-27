@@ -1,0 +1,74 @@
+# Registry and repository for Docker images
+# Default is docker/robotshop/image:latest
+image:
+  repo: robotshop
+  version: latest
+  pullPolicy: IfNotPresent
+  alt_repo: quay.io/rofrano
+
+# EUM configuration
+# Provide your key and set the endpoint
+eum:
+  key: null
+  url: https://eum-eu-west-1.instana.io
+  #url: https://eum-us-west-2.instana.io
+
+# These are defined in the web service Dockerfile
+host:
+  CATALOGUE_HOST: catalogue
+  USER_HOST: user
+  CART_HOST: cart
+  SHIPPING_HOST: shipping 
+  PAYMENT_HOST: payment 
+  RATINGS_HOST: ratings
+
+# Pod Security Policy
+psp:
+  enabled: false
+
+# For the mini ones minikube, minishift set to true
+nodeport: false
+
+# "special" Openshift. Set to true when deploying to any openshift flavour
+openshift: false
+
+ocCreateRoute: false
+
+######################################
+# Affinities for individual workloads
+# set in the following way:
+# <workload>:
+#   affinity: {}
+#   nodeSelector: {}
+#   tolerations: []
+######################################
+
+cart: {}
+
+catalogue: {}
+
+dispatch: {}
+
+mongodb: {}
+
+mysql: {}
+
+payment:
+  # Alternative payment gateway URL
+  # Default is https://www.paypal.com
+  gateway: null
+  #gateway: https://www.worldpay.com
+
+rabbitmq: {}
+
+ratings: {}
+
+redis:
+  # Storage class to use with redis statefulset.
+  storageClassName: standard
+
+shipping: {}
+
+user: {}
+
+web: {}

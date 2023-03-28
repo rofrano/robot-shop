@@ -32,6 +32,8 @@ spec:
           value: {{ .Values.host.RATINGS_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
         - name: SHIPPING_HOST
           value: {{ .Values.host.SHIPPING_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: USER_HOST
+          value: {{ .Values.host.USER_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
         {{- if .Values.eum.key }}
         - name: INSTANA_EUM_KEY
           value: {{ .Values.eum.key }}

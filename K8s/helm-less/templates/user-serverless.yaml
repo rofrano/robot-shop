@@ -1,0 +1,38 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: user
+spec:
+  template:
+    metadata:
+      labels:
+        networking.knative.dev/visibility: cluster-local
+      annotations:
+        app.kubernetes.io/part-of: {{ .Chart.Name }}
+        # the minimum number of pods to scale down to
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      {{ if .Values.psp.enabled }}
+      serviceAccountName: robot-shop
+      {{ end }}
+      containers:
+        - name: user
+          image: {{ .Values.image.repo }}/rs-user:{{ .Values.image.version }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # env:
+            # agent networking access
+            # - name: INSTANA_AGENT_HOST
+            #   valueFrom:
+            #     fieldRef:
+            #       fieldPath: status.hostIP
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi

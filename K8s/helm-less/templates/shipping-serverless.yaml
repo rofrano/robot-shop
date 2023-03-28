@@ -1,0 +1,42 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: shipping
+spec:
+  template:
+    metadata:
+      labels:
+        networking.knative.dev/visibility: cluster-local
+      annotations:
+        # the minimum number of pods to scale down to
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      {{ if .Values.psp.enabled }}
+      serviceAccountName: robot-shop
+      {{ end }}
+      containers:
+        - name: cart
+          image: {{ .Values.image.repo }}/rs-shipping:{{ .Values.image.version }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: CART_ENDPOINT
+            value: {{ .Values.host.CART_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
+          ports:
+          - containerPort: 8080
+          # it's Java it needs lots of memory
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1000Mi
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+            successThreshold: 1

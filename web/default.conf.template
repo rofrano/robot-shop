@@ -70,7 +70,7 @@ server {
     }
 
     location /api/shipping/ {
-        proxy_pass http://${SHIPPING_HOST}:8080/;
+        proxy_pass http://${SHIPPING_HOST}:80/;
     }
 
     location /api/payment/ {

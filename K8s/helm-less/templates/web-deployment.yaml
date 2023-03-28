@@ -21,10 +21,13 @@ spec:
       - name: web
         # image: {{ .Values.image.repo }}/rs-web:{{ .Values.image.version }}
         image: {{ .Values.image.alt_repo }}/rs-web:{{ .Values.image.version }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        # imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: Always
         env:
         - name: CART_HOST
           value: {{ .Values.host.CART_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
+        - name: CATALOGUE_HOST
+          value: {{ .Values.host.CATALOGUE_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
         {{- if .Values.eum.key }}
         - name: INSTANA_EUM_KEY
           value: {{ .Values.eum.key }}

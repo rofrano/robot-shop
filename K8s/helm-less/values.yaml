@@ -16,6 +16,7 @@ eum:
 # These are defined in the web service Dockerfile
 host:
   CATALOGUE_HOST: catalogue
+  CATALOGUE_PORT: 80
   USER_HOST: user
   CART_HOST: cart
   SHIPPING_HOST: shipping 

@@ -2,12 +2,16 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: cart
+  name: payment
+  labels:
+    service: payment
+    stage: prod
 spec:
   template:
     metadata:
       labels:
         networking.knative.dev/visibility: cluster-local
+        stage: prod
       annotations:
         app.kubernetes.io/part-of: {{ .Chart.Name }}
         # the minimum number of pods to scale down to
@@ -17,16 +21,20 @@ spec:
       serviceAccountName: robot-shop
       {{ end }}
       containers:
-        - name: cart
-          # image: {{ .Values.image.repo }}/rs-cart:{{ .Values.image.version }}
-          image: {{ .Values.image.alt_repo }}/rs-cart:{{ .Values.image.version }}
+        - name: payment
+          # image: {{ .Values.image.repo }}/rs-payment:{{ .Values.image.version }}
+          image: {{ .Values.image.alt_repo }}/rs-payment:{{ .Values.image.version }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           # agent networking access
           env:
-          - name: CATALOGUE_HOST
-            value: {{ .Values.host.CATALOGUE_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
-          - name: CATALOGUE_PORT
-            value: "{{ .Values.host.CATALOGUE_PORT }}"
+          - name: CART_HOST
+            value: {{ .Values.host.CART_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
+          - name: USER_HOST
+            value: {{ .Values.host.USER_HOST }}.{{ .Release.Namespace }}.svc.cluster.local
+          {{- if .Values.payment.gateway }}
+          - name: PAYMENT_GATEWAY
+            value: {{ .Values.payment.gateway }}
+          {{- end }}
             # - name: INSTANA_AGENT_HOST
             #   valueFrom:
             #     fieldRef:

@@ -1,0 +1,37 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: catalogue
+spec:
+  template:
+    metadata:
+      labels:
+        networking.knative.dev/visibility: cluster-local
+      annotations:
+        # the minimum number of pods to scale down to
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      {{ if .Values.psp.enabled }}
+      serviceAccountName: robot-shop
+      {{ end }}
+      containers:
+        - name: catalogue
+          image: {{ .Values.image.repo }}/rs-catalogue:{{ .Values.image.version }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # agent networking access
+          env:
+            # - name: INSTANA_AGENT_HOST
+            #   valueFrom:
+            #     fieldRef:
+            #       fieldPath: status.hostIP
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi

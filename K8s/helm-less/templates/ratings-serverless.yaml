@@ -1,0 +1,42 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: ratings
+spec:
+  template:
+    metadata:
+      labels:
+        networking.knative.dev/visibility: cluster-local
+      annotations:
+        # the minimum number of pods to scale down to
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      {{ if .Values.psp.enabled }}
+      serviceAccountName: robot-shop
+      {{ end }}
+      containers:
+        - name: ratings
+          image: {{ .Values.image.repo }}/rs-ratings:{{ .Values.image.version }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          env:
+          - name: CATALOGUE_URL
+            value: "http://{{ .Values.host.CATALOGUE_HOST }}.{{ .Release.Namespace }}.svc.cluster.local"
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          readinessProbe:
+            httpGet:
+              path: /_health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+            successThreshold: 1

@@ -26,11 +26,11 @@ spec:
         # it's Java it needs lots of memory
         resources:
           limits:
-            cpu: 200m
-            memory: 1000Mi
-          requests:
-            cpu: 100m
-            memory: 500Mi
+              cpu: 400m
+              memory: 2048Mi
+            requests:
+              cpu: 200m
+              memory: 1024Mi
         readinessProbe:
           httpGet:
             path: /health

@@ -68,6 +68,12 @@ redis:
   # Storage class to use with redis statefulset.
   storageClassName: standard
 
+  appRedisConnection:
+  host:
+  port:
+  db:
+  sslCrt:
+
 shipping: {}
 
 user: {}
